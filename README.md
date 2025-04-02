@@ -3,7 +3,7 @@
 ## Introduction
 This project intends to develop a model that can use testing data to tune its own parameters using self-supervised learning on data being fed in during test time. This will allow the model to continue learning after being deployed and become more robust, learning shifting distributions in the input data. 
 
-To run this, run the main.ipynb notebook after installing the necessary packages. It will automatically download the dataset, train the model, and display all the results of the experiments. 
+The results are already loaded in the main.ipynb notebook, but it can be ran so long as all the packages are already installed. It will automatically download the dataset, train the model, and display all the results of the experiments. 
 
 I use supervised learning to create models that can classify new inputs after it learns on training data, but the model is limited by how much data can be gathered and classified before deploying the model. There can also be underlying errors with how training data is collected, i.e. data that inaccurately models the real world or mislabeled data that propagates to the end model. These factors can be accounted for without having to seriously expand our training set if we had a way to implement training once the model has already been deployed. Under this paradigm, I modified a supervised learning model and implemented training at test-time, which will be robust to changes in distributions of data. 
 
@@ -22,11 +22,4 @@ While training at test time, the model will generate data augmented copies of th
 For the deep network itself, I decided to use group norm after experimenting with both batch norm and instance norm, where it worked well at keeping the model robust similarly to in Sun’s paper. The feature extractor consists of a convolutional layer that feeds into two residual layers, each defined by a norm-relu-conv structure. Each layer here downsamples the image using max pooling. After that, the main head and self-supervised head share a similar architecture, with both using two residual layers without downsampling, into a global average pool, ending with a fully connected layer. 
 
 To tune the test-time training hyperparameters, I split the validation set into a clean validation set used in the training phase pre-deployment, and a dirty validation set that would be modified with various corruptions to see how well the model performs when doing its self-supervised learning.
-
-## Experiments and Results
-The model will be trained on the Fashion MNIST dataset. This dataset is of a lower dimensionality and in grayscale compared to the more complicated CIFAR dataset we have used in class, but is still not a trivial image classification task. To test my method, I wrote multiple functions to simulate various different types of noise or image corruption. They are as follows: Gaussian noise, Impulse/Salt and Pepper noise, image pixelation, image blurring, and JPEG compression. While tuning hyperparameters, I used a subset of the training data that was not seen during the clean training/validation phase and corrupted it with these noises at different intensities.
-
-I varied the error that each test batch received, increasing the intensity with each batch at a linear rate for both Gaussian and Salt and Pepper noise. To ensure the model is always fresh from the training phase, I used deep copies to keep a record of the original model parameters that can be used to refresh the model without retraining it. I plotted the cumulative error of all examples seen so far on each classifier. As examples, I also display some examples of corrupted images. The low and high intensity corrupted images are not necessarily from the same image. 
-
-To clarify, object recognition is the baseline ResNet, using the same layers as the self-supervised ResNet, but having only one head, not two. The joint training refers to using the self-supervised ResNet in a non-TTT (test-time training) capacity.
 
