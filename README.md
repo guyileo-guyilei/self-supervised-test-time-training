@@ -1,6 +1,4 @@
 # Self-Supervised Test-Time Training
-
-## Introduction
 This project intends to develop a model that can use testing data to tune its own parameters using self-supervised learning on data being fed in during test time. This will allow the model to continue learning after being deployed and become more robust, learning shifting distributions in the input data. 
 
 The results are already loaded in the main.ipynb notebook, but it can be ran so long as all the packages are already installed. It will automatically download the dataset, train the model, and display all the results of the experiments. 
